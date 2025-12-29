@@ -13,10 +13,12 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",
+    "express": "^5.2.1",
     "mqpacker": "^7.0.0",
     "sass": "^1.89.2",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "vite-plugin-ejs": "^1.7.0",
-    "vite-plugin-purgecss": "^0.2.13",
-    "ws": "^8.18.3"
+    "vite-plugin-purgecss": "^0.2.13"
   }
 }

@@ -1,33 +1,51 @@
-import { WebSocketServer } from 'ws';
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
 
-const wss = new WebSocketServer({ port: 8080 });
-let players = [];
+const app = express();
+const server = http.createServer(app);
 
-// Fonction pour envoyer à tous le nombre de joueurs
-function broadcastPlayerCount() {
-    const count = players.length;
-    const message = JSON.stringify({ type: 'playerCount', count });
+// Autoriser CORS pour Vite (port 5173)
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+});
 
-    players.forEach(player => {
-        player.send(message);
+
+function playerCount() {
+    io.on('connection', (socket) => {
+        console.log('Un client est connecté');
+
+        const playerCount = io.sockets.sockets.size
+        console.log('Clients connectés :', playerCount);
+
+        io.emit('nombre_clients', playerCount);
+
+        socket.on('disconnect', () => {
+            const playerCount = io.sockets.sockets.size;
+            console.log('Client déconnecté. Clients restants :', playerCount);
+            io.emit('nombre_clients', playerCount);
+        });
     });
 }
 
-wss.on('connection', (ws) => {
-    players.push(ws)
+playerCount()
 
-    broadcastPlayerCount()
 
-    ws.on('message', (message) => {
-        players.forEach(player => {
-            if (player !== ws) player.send(message)
-        });
-    });
+function box() {
 
-    ws.on('close', () => {
-        players = players.filter(p => p !== ws)
-        broadcastPlayerCount()
-    });
+    const box = document.getElementById('box')
+    const style = getComputedStyle(box);
+    const color = style.backgroundColor;
+
+    io.emit('boxColor', color)
+
+}
+
+
+server.listen(3000, () => {
+    console.log('Serveur Socket.IO lancé sur http://localhost:3000');
 });
-
-console.log('Serveur WS lancé sur le port 8080')

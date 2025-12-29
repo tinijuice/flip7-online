@@ -1,6 +1,7 @@
 import './assets/css/style.scss';
+import { io } from "socket.io-client";
 
-const socket = new WebSocket('ws://localhost:8080');
+const socket = io("http://localhost:3000");
 
 
 function setGlobalEvent() {
@@ -25,27 +26,36 @@ function init() {
 
 
 function playerCount() {
-    const playerCounterEl = document.querySelector('.playerCount');
-
-    socket.addEventListener('message', (e) => {
-        const data = JSON.parse(e.data);
-
-        if (data.type === 'playerCount') {
-            playerCounterEl.textContent = `Joueurs en ligne : ${data.count}`;
-        }
+    socket.on('nombre_clients', (nombre) => {
+        document.getElementById('compteur').textContent = nombre;
     });
 }
 
 
+
 let isRed = false
-function box(e) {
-    const box = e.target
+const test = document.getElementById('box')
 
-    isRed = !isRed;
-    box.style.background = isRed ? "red" : "green"
+function box() {
+    isRed = !isRed
 
-    console.log(isRed)
+    test.style.backgroundColor = isRed ? 'red' : 'green'
+
+    const style = getComputedStyle(test);
+    const color = style.backgroundColor;
+
+    socket.emit('boxColor', color)
+
 }
+
+socket.on('boxColor', (color) => {
+    test.style.backgroundColor = color
+});
+
+
+
+
+
 
 
 
