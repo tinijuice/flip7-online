@@ -2,6 +2,28 @@ import './assets/css/style.scss';
 
 const socket = new WebSocket('ws://localhost:8080');
 
+
+function setGlobalEvent() {
+    document.addEventListener('click', e => {
+
+        const actions = {
+
+            // Exemple d'utilisation
+            // Classe du HTML: () => function(e)
+            box: () => box(e)
+        };
+
+        const action = Object.keys(actions).find(key => e.target.closest(`.${key}`))
+        if (action) actions[action]()
+    })
+}
+
+function init() {
+    setGlobalEvent()
+    playerCount()
+}
+
+
 function playerCount() {
     const playerCounterEl = document.querySelector('.playerCount');
 
@@ -15,27 +37,14 @@ function playerCount() {
 }
 
 
+let isRed = false
+function box(e) {
+    const box = e.target
 
+    isRed = !isRed;
+    box.style.background = isRed ? "red" : "green"
 
-
-
-function setGlobalEvent() {
-    document.addEventListener('click', e => {
-
-        const actions = {
-
-            // Exemple d'utilisation
-            // Classe du HTML: () => function(e)
-        };
-
-        const action = Object.keys(actions).find(key => e.target.closest(`.${key}`))
-        if (action) actions[action]()
-    })
-}
-
-function init() {
-    setGlobalEvent()
-    playerCount()
+    console.log(isRed)
 }
 
 
