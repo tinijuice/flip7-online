@@ -1,0 +1,6 @@
+@use 'sass:map' as *;
+@use 'variables' as *;
+
+@function computeContainerSize($breakpoint){
+    @return get($mq, $breakpoint) - 50px;
+}

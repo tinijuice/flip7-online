@@ -1,0 +1,16 @@
+@use 'mixins' as *;
+
+
+
+
+
+
+
+
+@include mq(md) {}
+
+@include mq(sm) {}
+
+@include mq(xs) {}
+
+@include mq(xxs) {}
