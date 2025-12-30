@@ -32,20 +32,24 @@ function playerCount() {
     });
 }
 
-playerCount()
 
+function changeBoxColor() {
+    io.on('connection', (socket) => {
+        socket.on('boxColor', (color) => {
+            io.emit('boxColor', color); // <-- IMPORTANT : tous les clients
+        });
+    })
+}
 
-function box() {
-
-    const box = document.getElementById('box')
-    const style = getComputedStyle(box);
-    const color = style.backgroundColor;
-
-    io.emit('boxColor', color)
-
+function init() {
+    
+    // playerCount()
+    changeBoxColor()
 }
 
 
 server.listen(3000, () => {
     console.log('Serveur Socket.IO lancé sur http://localhost:3000');
 });
+
+init()

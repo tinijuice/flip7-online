@@ -33,6 +33,11 @@
 :root {
     --color-white: #fff;
     --color-black: #000;
+    --color-main: #81CBD0;
+    --color-sand: #FDF8DA;
+    --color-red: #ED674D;
+    --color-yellow: #FFDA5F;
+    --color-darkPurpl: #5B3B5F;
 
     --base-px: 10px;
     --gap-content: 2rem;
@@ -67,7 +72,6 @@ li {
 
 section {
     position: relative;
-    padding: 120px 3% 0;
     content-visibility: auto;
     contain-intrinsic-size: auto 600px;
 }
