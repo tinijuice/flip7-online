@@ -5,23 +5,27 @@
 #heroHome {
     background-color: var(--color-main);
     height: 100vh;
-    padding-top: 50px;
+    padding: 60px 0;
 
     .container {
 
         display: flex;
         flex-flow: column;
+        height: 100%;
         align-items: center;
-        gap: 60px;
+        gap: 20px;
 
         .logo {
+            height: 50%;
             .image {
+                height: 100%;
                 width: 100%;
                 user-select: none;
             }
         }
 
         form {
+            height: 50%;
             width: 40%;
             display: flex;
             flex-flow: column;
@@ -71,11 +75,15 @@
             }
 
             .launch{
-                display: flex;
+                display: none;
                 align-items: center;
                 gap: 10px;
                 height: 60px;
                 margin-top: 10px;
+
+                &.active{
+                    display: flex;
+                }
 
                 .code{
                     background: rgba(0, 0, 0, 0.155);
@@ -85,6 +93,18 @@
                     font-size: 2rem;
                     border-radius: 6px;
                     color: var(--color-white);
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+
+                    .copy-box{
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        background-color: rgba(0, 0, 0, 0.186);
+                        padding: 6px;
+                        border-radius: 3px;
+                    }
                 }
 
                 button{

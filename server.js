@@ -36,7 +36,7 @@ function playerCount() {
 function changeBoxColor() {
     io.on('connection', (socket) => {
         socket.on('boxColor', (color) => {
-            io.emit('boxColor', color); // <-- IMPORTANT : tous les clients
+            io.emit('boxColor', color);
         });
     })
 }
