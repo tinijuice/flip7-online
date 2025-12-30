@@ -22,17 +22,6 @@ function init() {
 }
 
 
-
-function box(e) {
-
-    const box = e.target
-}
-
-socket.on('boxColor', (color) => {
-    box.style.backgroundColor = color;
-});
-
-
 function createGame(e) {
 
     e.preventDefault()

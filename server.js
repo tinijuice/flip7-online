@@ -32,15 +32,6 @@ function playerCount() {
     });
 }
 
-
-function changeBoxColor() {
-    io.on('connection', (socket) => {
-        socket.on('boxColor', (color) => {
-            io.emit('boxColor', color);
-        });
-    })
-}
-
 function init() {
     
     // playerCount()
