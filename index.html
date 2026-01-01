@@ -1,7 +1,7 @@
 <%- include('components/header.html', {title: 'Flip 7 Online' , page: '' })%>
 
    <main>
-      <section id="heroHome">
+      <section id="home">
          <div class="container">
             <div class="logo">
                <div class="image">
@@ -9,19 +9,72 @@
                </div>
             </div>
             <form>
-               <input id="inputPseudo" type="text" placeholder="Entrer un pseudo" required />
-               <button id="join">Rejoindre une salle</button>
-               <button id="create">Créer une salle</button>
-               <div class="launch">
-                  <div class="code">731982
+               <input value="leo" id="inputPseudo" type="text" placeholder="Entrer un pseudo" required />
+               <button id="join" data-btn="joinGame">Rejoindre une salle</button>
+               <button id="create" data-btn="launch">Créer une salle</button>
+               <div class="launch starting">
+                  <div class="code">
+                     <p></p>
                      <div class="copy-box" id="copyBox">
                         <span class="icon-copy"></span>
                      </div>
                   </div>
-                  <button id="launch" type="submit">Démarrer</button>
+                  <button id="openRoom" type="submit">Créer</button>
+                  <button id="startGame" class="hidden" type="submit">Lancer</button>
+               </div>
+               <div class="joinGame starting">
+                  <input type="text" maxlength="6" class="code-to-paste">
+                  <button id="join2" type="submit">Rejoindre</button>
                </div>
             </form>
          </div>
       </section>
+
+      <section id="game" class="hidden">
+         <div class="container">
+            
+            <div id="pioche">
+               <div class="box">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+               </div>
+            </div>
+
+            <div class="main">
+               <div class=""></div>
+               <div class=""></div>
+               <div class=""></div>
+               <div class=""></div>
+               <div class=""></div>
+               <div class=""></div>
+               <div class=""></div>
+            </div>
+         </div>
+      </section>
+
+      <div id="lobby">
+         <div class="content">
+            <div class="cards">
+
+               <!-- Insersion du template ici -->
+
+            </div>
+
+            <!-- Template -->
+            <template id="cardPlayerTemplate">
+               <div class="card">
+                  <div class="profil-picture">
+                     <img
+                        src="https://images.pexels.com/photos/27867019/pexels-photo-27867019/free-photo-of-nature-ete-jardin-jaune.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                        alt="">
+                  </div>
+                  <div class="pseudo"></div>
+               </div>
+            </template>
+
+            <div class="numPlayers">0/6 joueurs</div>
+         </div>
+      </div>
    </main>
    <%- include('components/footer.html')%>

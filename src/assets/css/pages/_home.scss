@@ -2,7 +2,7 @@
 
 
 
-#heroHome {
+#home {
     background-color: var(--color-main);
     height: 100vh;
     padding: 60px 0;
@@ -17,6 +17,7 @@
 
         .logo {
             height: 50%;
+
             .image {
                 height: 100%;
                 width: 100%;
@@ -74,18 +75,18 @@
                 }
             }
 
-            .launch{
+            .starting {
                 display: none;
                 align-items: center;
                 gap: 10px;
                 height: 60px;
                 margin-top: 10px;
 
-                &.active{
+                &.active {
                     display: flex;
                 }
 
-                .code{
+                .code {
                     background: rgba(0, 0, 0, 0.155);
                     height: 100%;
                     align-content: center;
@@ -96,20 +97,43 @@
                     display: flex;
                     align-items: center;
                     gap: 15px;
+                    letter-spacing: 5px;
 
-                    .copy-box{
+                    .copy-box {
                         cursor: pointer;
                         display: flex;
                         align-items: center;
                         background-color: rgba(0, 0, 0, 0.186);
                         padding: 6px;
                         border-radius: 3px;
+
+                        @keyframes copy {
+                            0% {
+                                transform: scale(.8);
+                            }
+
+                            50% {
+                                transform: scale(1.1);
+                            }
+
+                            100% {
+                                transform: scale(1);
+                            }
+                        }
+
+                        &.animation span {
+                            animation: copy .3s ease;
+                        }
+
+                        & span {
+                            pointer-events: none;
+                        }
                     }
                 }
 
-                button{
-                    height: 100%;
+                button {
                     flex: 1;
+                    height: 100%;
                     border: 0;
                     border-radius: 6px;
                     background-color: var(--color-white);
@@ -117,11 +141,150 @@
                     font-size: 2rem;
                     text-transform: uppercase;
                     font-weight: 900;
+                    width: 50%;
+
+                    &:hover {
+                        background-color: var(--color-sand);
+                        filter: brightness(1);
+                    }
+                }
+
+                input.code-to-paste {
+                    width: 150px;
+                    display: flex;
+                    text-align: center;
+                    padding: 0 20px;
+                    border-radius: 6px;
+                    letter-spacing: 6px;
                 }
             }
         }
     }
 }
+
+
+
+#lobby {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    height: 60vh;
+    width: 300px;
+    border: 3px solid var(--color-sand);
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+
+    .content {
+        position: relative;
+        height: 100%;
+        width: 100%;
+
+        .cards {
+
+            .card {
+                display: flex;
+                align-items: center;
+                height: 60px;
+                padding: 10px 0;
+                gap: 20px;
+                border-bottom: 1px solid var(--color-sand);
+
+                .profil-picture {
+                    height: 100%;
+                    border-radius: 100%;
+                    overflow: hidden;
+                }
+
+                .pseudo {
+                    color: var(--color-white);
+                }
+            }
+        }
+
+        .numPlayers {
+            color: var(--color-white);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+    }
+}
+
+
+#game {
+    height: 100vh;
+    background-color: var(--color-sand);
+
+    .container {
+        width: 100%;
+        position: relative;
+        height: 100%;
+
+        #pioche {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            aspect-ratio: 1/1.5;
+            transform: translate(-50%, -50%);
+
+            .box {
+                position: relative;
+                width: 100%;
+
+                div {
+                    width: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    aspect-ratio: 1/1.5;
+                    background-color: red;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    border: 2px solid var(--color-sand);
+
+                    &:nth-child(2){
+                        left: 12px;
+                        top: 5px;
+                        z-index: -1;
+                    }
+
+                    &:nth-child(3){
+                        left: 18px;
+                        top: 10px;
+                        z-index: -2;
+                    }
+                }
+            }
+
+
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            width: 60%;
+            gap: 20px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+
+            div {
+                aspect-ratio: 1/1.5;
+                border-radius: 8px;
+                background-color: red;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+
+
+
 
 
 

@@ -38,6 +38,7 @@
     --color-red: #ED674D;
     --color-yellow: #FFDA5F;
     --color-darkPurpl: #5B3B5F;
+    --color-pink: #E84E65;
 
     --base-px: 10px;
     --gap-content: 2rem;
@@ -72,6 +73,7 @@ li {
 
 section {
     position: relative;
+    padding: 20px;
     content-visibility: auto;
     contain-intrinsic-size: auto 600px;
 }
@@ -80,14 +82,14 @@ section {
     line-height: 1.2;
 }
 
+.hidden{
+    display: none !important;
+}
+
 
 .container {
     width: get($mq, 'md') - 100px;
     margin-inline: auto;
-}
-
-.content>*:not(:last-child) {
-    margin-bottom: var(--gap-content);
 }
 
 

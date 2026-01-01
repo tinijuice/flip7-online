@@ -15,27 +15,65 @@ const io = new Server(server, {
 });
 
 
-function playerCount() {
-    io.on('connection', (socket) => {
-        console.log('Un client est connecté');
+function room() {
 
-        const playerCount = io.sockets.sockets.size
-        console.log('Clients connectés :', playerCount);
+    const rooms = {}; // { roomId: { players: [pseudo1, pseudo2] } }
 
-        io.emit('nombre_clients', playerCount);
+    io.on("connection", (socket) => {
 
-        socket.on('disconnect', () => {
-            const playerCount = io.sockets.sockets.size;
-            console.log('Client déconnecté. Clients restants :', playerCount);
-            io.emit('nombre_clients', playerCount);
+        socket.on("create-room", (roomId, pseudo) => {
+            socket.join(roomId);
+
+            if (!rooms[roomId]) rooms[roomId] = { players: [] };
+            rooms[roomId].players.push({ id: socket.id, pseudo });
+
+            io.to(roomId).emit("room-update", rooms[roomId].players);
+        });
+
+        socket.on("join-room", (roomId, pseudo) => {
+            const room = rooms[roomId];
+            if (!room) {
+                socket.emit("error-room", `La room ${roomId} n'existe pas !`);
+                return;
+            }
+
+            if (room.players.length >= 6) {
+                socket.emit("error-room", "La room est pleine !");
+                return;
+            }
+
+
+            // Vérifier si le socket est déjà dans la room
+            const alreadyJoined = room.players.some(p => p.id === socket.id);
+            if (alreadyJoined) {
+                socket.emit("error-room", `Vous êtes déjà dans la room ${roomId}`);
+                return;
+            }
+
+            socket.join(roomId);
+            room.players.push({ id: socket.id, pseudo });
+
+            io.to(roomId).emit("room-update", room.players);
+        });
+
+        // gérer la déconnexion
+        socket.on("disconnecting", () => {
+            socket.rooms.forEach((roomId) => {
+                const room = rooms[roomId];
+                if (!room) return;
+                room.players = room.players.filter(p => p.id !== socket.id);
+                io.to(roomId).emit("room-update", room.players);
+            });
         });
     });
 }
 
+
+
 function init() {
-    
+
+    room()
     // playerCount()
-    changeBoxColor()
 }
 
 
