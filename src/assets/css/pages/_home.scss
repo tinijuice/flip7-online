@@ -246,14 +246,12 @@
                     border: 2px solid var(--color-sand);
 
                     &:nth-child(2){
-                        left: 12px;
-                        top: 5px;
+                        left: 8px;
                         z-index: -1;
                     }
 
                     &:nth-child(3){
-                        left: 18px;
-                        top: 10px;
+                        left: 16px;
                         z-index: -2;
                     }
                 }
@@ -277,6 +275,13 @@
                 border-radius: 8px;
                 background-color: red;
                 cursor: pointer;
+                position: relative;
+
+                span{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
             }
         }
     }

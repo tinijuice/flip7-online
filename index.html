@@ -1,6 +1,8 @@
 <%- include('components/header.html', {title: 'Flip 7 Online' , page: '' })%>
 
    <main>
+      <div id="roomId" style="display: none;"></div>
+
       <section id="home">
          <div class="container">
             <div class="logo">
@@ -32,7 +34,7 @@
 
       <section id="game" class="hidden">
          <div class="container">
-            
+
             <div id="pioche">
                <div class="box">
                   <div></div>
@@ -41,15 +43,21 @@
                </div>
             </div>
 
-            <div class="main">
-               <div class=""></div>
-               <div class=""></div>
-               <div class=""></div>
-               <div class=""></div>
-               <div class=""></div>
-               <div class=""></div>
-               <div class=""></div>
+            <div class="main" data-id="">
+               <!-- <div class="cardInHand" data-value="1">
+                  <span>1</span>
+               </div>
+               <div class="cardInHand" data-value="2">
+                  <span>2</span>
+               </div> -->
+
             </div>
+
+            <template id="cardTemplate">
+               <div class="cardInHand">
+                  <span class="number"></span>
+               </div>
+            </template>
          </div>
       </section>
 
