@@ -2,8 +2,9 @@
 
    <main>
       <div id="roomId" style="display: none;"></div>
+      <div id="playerID" style="display: none;"></div>
 
-      <section id="home">
+      <section id="home" class="hidden">
          <div class="container">
             <div class="logo">
                <div class="image">
@@ -32,7 +33,7 @@
          </div>
       </section>
 
-      <section id="game" class="hidden">
+      <section id="game" class="">
          <div class="container">
 
             <div id="pioche">
@@ -43,25 +44,54 @@
                </div>
             </div>
 
-            <div class="main" data-id="">
-               <!-- <div class="cardInHand" data-value="1">
-                  <span>1</span>
+            <div class="players-container">
+               <div class="player-area me">
+                  <div class="infos">
+                     <div class="pseudo">TiniJuice</div>
+                     <div class="score">27</div>
+                     <div class="scoreTotal">143</div>
+                  </div>
+                  <div class="cards">
+                     <div class="card">
+                        <span class="number">12</span>
+                     </div>
+                  </div>
                </div>
-               <div class="cardInHand" data-value="2">
-                  <span>2</span>
-               </div> -->
-
+               <div class="player-area">
+                  <div class="infos">
+                     <div class="pseudo">TiniJuice</div>
+                     <div class="score">27</div>
+                     <div class="scoreTotal">143</div>
+                  </div>
+                  <div class="cards">
+                     <div class="card">
+                        <span class="number">12</span>
+                     </div>
+                     <div class="card">
+                        <span class="number">12</span>
+                     </div>
+                     <div class="card">
+                        <span class="number">12</span>
+                     </div>
+                     <div class="card">
+                        <span class="number">12</span>
+                     </div>
+                  </div>
+               </div>
             </div>
 
-            <template id="cardTemplate">
-               <div class="cardInHand">
-                  <span class="number"></span>
-               </div>
-            </template>
          </div>
+
+         <template id="cardTemplate">
+            <div class="card">
+               <span class="number"></span>
+            </div>
+         </template>
+
+
       </section>
 
-      <div id="lobby">
+      <div id="lobby" class="hidden">
          <div class="content">
             <div class="cards">
 
@@ -74,7 +104,7 @@
                <div class="card">
                   <div class="profil-picture">
                      <img
-                        src="https://images.pexels.com/photos/27867019/pexels-photo-27867019/free-photo-of-nature-ete-jardin-jaune.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                        src="https://img.freepik.com/vector-premium/iconos-usuario-incluye-iconos-usuario-icones-personas-simbolos-elementos-diseno-grafico-calidad-premium_981536-526.jpg"
                         alt="">
                   </div>
                   <div class="pseudo"></div>

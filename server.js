@@ -15,6 +15,9 @@ const io = new Server(server, {
 });
 
 
+
+
+
 const rooms = {}; // { roomId: { players: [pseudo1, pseudo2] } }
 
 io.on("connection", (socket) => {
@@ -81,7 +84,7 @@ io.on("connection", (socket) => {
         room.state = 'game';
 
         io.to(roomId).emit("game-start", {
-            players: room.players.map(p => ({ pseudo: p.pseudo, cards: p.cards })),
+            players: room.players.map(p => ({id: p.id, pseudo: p.pseudo, cards: p.cards })),
             currentPlayer: room.players[room.currentPlayerIndex].id,
             id_player: socket.id
         });

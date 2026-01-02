@@ -3,8 +3,20 @@ import { compile } from 'sass';
 import './assets/css/style.scss';
 import { io } from "socket.io-client";
 
+
 const socket = io("http://localhost:3000");
 const fragment = document.createDocumentFragment()
+
+
+
+socket.on("connect", () => {
+
+    const playerIdBox = document.getElementById('playerID');
+    playerIdBox.textContent = socket.id;
+});
+
+
+
 
 function setGlobalEvent() {
     document.addEventListener('click', (e) => {
@@ -161,8 +173,47 @@ socket.on("game-start", (data) => {
     game.classList.toggle('hidden');
     lobby.classList.toggle('hidden');
 
-    const main = document.querySelector('.main')
-    main.dataset.id = data.id_player
+    const container = document.querySelector('#game .container')
+    const playerID = document.getElementById('playerID').textContent
+
+    const me = data.players.find(p => p.id === playerID)
+    const others = data.players.filter(p => p.id !== playerID)
+
+    const orderedPlayers = [me, ...others]
+
+
+
+    orderedPlayers.forEach((player, index) => {
+
+        const template = document
+            .querySelector('#gameSetTemplate')
+            .content
+            .cloneNode(true)
+
+        const gameSet = template.querySelector('.game-set')
+
+        gameSet.classList.add('game-set-' + (index + 1))
+        gameSet.dataset.playerId = player.id
+
+        if (index === 0) {
+            gameSet.classList.add('me')
+        } else {
+            gameSet.classList.add('other')
+        }
+
+        fragment.append(template)
+    })
+
+    container.append(fragment)
+
+
+    const gameSet = document.querySelector(`.game-set[data-player-id="${data.currentPlayer}"]`)
+    const gameSets = document.querySelectorAll(`.game-set:not([data-player-id="${data.currentPlayer}"])`)
+
+    gameSet.classList.add('active')
+
+
+    console.log(data)
 
 })
 
@@ -175,31 +226,36 @@ function pickCard(e) {
 
 socket.on("pick-card", (data) => {
 
-    const roomId = document.getElementById('roomId').textContent
+    console.log(data)
 
-    const main = document.querySelector('.main')
-    const cardsValues = Array.from(main.querySelectorAll('.cardInHand')).map(card => card.dataset.value);
+
+    const gameSet = document.querySelector(`.game-set[data-player-id="${data.id}"]`)
+    const cardsValues = Array.from(gameSet.querySelectorAll('.cardsInHand')).map(card => card.dataset.value);
 
     const pickedCardValue = String(data.card.value)
+    const gameSets = document.querySelectorAll(`.game-set:not([data-player-id="${data.id}"])`)
+
+    gameSet.classList.add('active')
+    gameSets.forEach(gameset => {
+        gameset.classList.remove('active')
+    });
+
 
     // console.log('lastCardValue = ', lastCardValue)
     // console.log('pickedCardValue', pickedCardValue)
 
 
-    if (main.children.length >= 7) return
+    if (gameSet.children.length >= 7) return
     if (cardsValues) {
         if (cardsValues.includes(pickedCardValue)) return
     }
 
-    socket.emit("update-game", (roomId))
-
-
     const template = document.getElementById('cardTemplate').content.cloneNode(true)
 
 
-    template.querySelector('.cardInHand').dataset.value = data.card.value
+    template.querySelector('.cardsInHand').dataset.value = data.card.value
     template.querySelector('.number').textContent = data.card.value
-    main.append(template)
+    gameSet.append(template)
 })
 
 
