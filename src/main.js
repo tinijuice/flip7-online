@@ -173,7 +173,8 @@ socket.on("game-start", (data) => {
     game.classList.toggle('hidden');
     lobby.classList.toggle('hidden');
 
-    const container = document.querySelector('#game .container')
+    const containerMe = document.querySelector('#game .players-container')
+    const containerOther = document.querySelector('#game .players-container .other')
     const playerID = document.getElementById('playerID').textContent
 
     const me = data.players.find(p => p.id === playerID)
@@ -186,31 +187,31 @@ socket.on("game-start", (data) => {
     orderedPlayers.forEach((player, index) => {
 
         const template = document
-            .querySelector('#gameSetTemplate')
+            .querySelector('#playerAreaTemplate')
             .content
             .cloneNode(true)
 
-        const gameSet = template.querySelector('.game-set')
+        const playerArea = template.querySelector('.player-area')
 
-        gameSet.classList.add('game-set-' + (index + 1))
-        gameSet.dataset.playerId = player.id
+        playerArea.classList.add('player-area-' + (index + 1))
+        playerArea.dataset.playerId = player.id
 
         if (index === 0) {
-            gameSet.classList.add('me')
+            playerArea.classList.add('me')
         } else {
-            gameSet.classList.add('other')
+            playerArea.classList.add('other')
         }
 
         fragment.append(template)
     })
 
-    container.append(fragment)
+    containerOther.append(fragment)
 
 
-    const gameSet = document.querySelector(`.game-set[data-player-id="${data.currentPlayer}"]`)
-    const gameSets = document.querySelectorAll(`.game-set:not([data-player-id="${data.currentPlayer}"])`)
+    const playerArea = document.querySelector(`.player-area[data-player-id="${data.currentPlayer}"]`)
+    const playerAreas = document.querySelectorAll(`.player-area:not([data-player-id="${data.currentPlayer}"])`)
 
-    gameSet.classList.add('active')
+    playerArea.classList.add('active')
 
 
     console.log(data)
@@ -229,15 +230,16 @@ socket.on("pick-card", (data) => {
     console.log(data)
 
 
-    const gameSet = document.querySelector(`.game-set[data-player-id="${data.id}"]`)
-    const cardsValues = Array.from(gameSet.querySelectorAll('.cardsInHand')).map(card => card.dataset.value);
+    const playerArea = document.querySelector(`.player-area[data-player-id="${data.id}"]`)
+    const cardsValues = Array.from(playerArea.querySelectorAll('.cardsInHand')).map(card => card.dataset.value);
 
     const pickedCardValue = String(data.card.value)
-    const gameSets = document.querySelectorAll(`.game-set:not([data-player-id="${data.id}"])`)
+    const playerAreas = document.querySelectorAll(`.player-area:not([data-player-id="${data.id}"])`)
+    const displayCards = playerArea.querySelector('.cards')
 
-    gameSet.classList.add('active')
-    gameSets.forEach(gameset => {
-        gameset.classList.remove('active')
+    playerArea.classList.add('active')
+    playerAreas.forEach(playerArea => {
+        playerArea.classList.remove('active')
     });
 
 
@@ -245,7 +247,7 @@ socket.on("pick-card", (data) => {
     // console.log('pickedCardValue', pickedCardValue)
 
 
-    if (gameSet.children.length >= 7) return
+    if (displayCards.children.length >= 7) return
     if (cardsValues) {
         if (cardsValues.includes(pickedCardValue)) return
     }
@@ -253,9 +255,9 @@ socket.on("pick-card", (data) => {
     const template = document.getElementById('cardTemplate').content.cloneNode(true)
 
 
-    template.querySelector('.cardsInHand').dataset.value = data.card.value
+    template.querySelector('.card').dataset.value = data.card.value
     template.querySelector('.number').textContent = data.card.value
-    gameSet.append(template)
+    displayCards.append(template)
 })
 
 
