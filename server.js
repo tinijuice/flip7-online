@@ -78,6 +78,7 @@ io.on("connection", (socket) => {
         room.players.forEach(player => {
             player.cards = [];
             player.score = 0;
+            player.scoreAcutel = 0;
         });
 
         room.deck = createDeck();
@@ -92,46 +93,79 @@ io.on("connection", (socket) => {
     })
 
 
-    //Piocher une carte
-    socket.on("pick-card", (roomId) => {
+
+    socket.on('pick-card', (roomId) => {
 
         const room = rooms[roomId]
-        if (!room) return console.log('non');
+
+        if (!room) return console.log('Aucune room');
 
         const player = room.players[room.currentPlayerIndex];
 
-        if (socket.id !== player.id) return console.log('Pas au tour de ce joueur')
+        if (!isCurrentPlayer(socket, room)) return console.log("Ce n'est au tour de ce joueur");
 
-        const card = room.deck.shift();
-        player.cards.push(card);
-        player.score += card.value
+        const card = drawCard(room)
+        applyCardToPlayer(player, card)
+        applyScoreToPlayer(player, card)
+        emitPickCard(io, roomId, player, card)
+        nextPlayer(room)
 
-
-        console.log("Carte piochée :", card);
-
-        io.to(roomId).emit("pick-card", { pseudo: player.pseudo, card, id: player.id, score: player.score});
-
-        room.currentPlayerIndex++
-        if (room.currentPlayerIndex >= room.players.length) room.currentPlayerIndex = 0
-
-        console.log(`C'est à ${room.players[room.currentPlayerIndex].pseudo} de jouer`);
+        console.log(`C'est à ${room.players[room.currentPlayerIndex].pseudo} de jouer`)
     })
 
 
+
+    function isCurrentPlayer(socket, room) {
+
+        return socket.id === room.players[room.currentPlayerIndex].id
+    }
+
+    function drawCard(room) {
+
+        return room.deck.shift()
+
+    }
+
+    function applyCardToPlayer(player, card) {
+        player.cards.push(card)
+    }
+
+    function applyScoreToPlayer(player, card) {
+        player.scoreAcutel += card.value
+        player.score += card.value
+    }
+
+    function nextPlayer(room) {
+
+        room.currentPlayerIndex++
+        if (room.currentPlayerIndex >= room.players.length) room.currentPlayerIndex = 0;
+    }
+
+    function emitPickCard(io, roomId, player, card) {
+        io.to(roomId).emit("pick-card", {
+            pseudo: player.pseudo,
+            card,
+            id: player.id,
+            score: player.score,
+            scoreAcutel: player.scoreAcutel
+        })
+    }
+
+
+
     // Update game
-    socket.on("update-game", (roomId, playerId) => {
-
-        const room = rooms[roomId];
-
-        if (!room) return
-
-        const players = room.players
-
-        const player = players.find((p) => p.id === playerId);
-
-        console.log(player)
+    socket.on("update-score", (roomId, data) => {
 
 
+        const room = rooms[roomId]
+
+        if (!room) return console.log('Aucune room');
+
+        const player = room.players.find(player => player.id === data.id)
+
+        player.score = data.score
+
+        console.log(roomId, '//', data)
     })
 
 });

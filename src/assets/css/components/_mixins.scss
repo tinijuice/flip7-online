@@ -2,23 +2,26 @@
 @use 'sass:map' as *;
 
 
-@mixin mq($breakpoint){
+@mixin mq($breakpoint) {
     $value: get($mq, $breakpoint);
-    @if($value){
+
+    @if($value) {
         @media screen and (max-width:$value) {
             @content;
         }
-    }@else{
+    }
+
+    @else {
         @warn "Breakpoint #{$breakpoint} doesn's exist...";
     }
 }
 
 
 
-@mixin col-gen($bp:'-'){
+@mixin col-gen($bp: '-') {
 
-    @for $i from 1 to 13{
-        .col#{$bp}#{$i}{
+    @for $i from 1 to 13 {
+        .col#{$bp}#{$i} {
             grid-column: span $i;
         }
     }
@@ -26,3 +29,11 @@
 }
 
 
+
+@mixin color-card() {
+    @each $value, $color in $colorCards {
+        .card[data-value="#{$value}"] {
+            background-color: $color;
+        }
+    }
+}

@@ -172,6 +172,13 @@ function startGame(e) {
 
 socket.on("game-start", (data) => {
 
+    showGame()
+    setGameArea(data)
+
+})
+
+function showGame() {
+
     const home = document.getElementById('home');
     const game = document.getElementById('game');
     const lobby = document.getElementById('lobby');
@@ -179,9 +186,11 @@ socket.on("game-start", (data) => {
     home.classList.toggle('hidden');
     game.classList.toggle('hidden');
     lobby.classList.toggle('hidden');
+}
 
-    const containerMe = document.querySelector('#game .players-container')
-    const containerOther = document.querySelector('#game .players-container .other')
+function setGameArea(data) {
+
+    const container = document.querySelector('#game .players-container')
     const playerID = document.getElementById('playerID').textContent
 
     const me = data.players.find(p => p.id === playerID)
@@ -209,9 +218,9 @@ socket.on("game-start", (data) => {
         fragment.append(template)
     })
 
-    containerOther.append(fragment)
+    container.append(fragment)
+}
 
-})
 
 function pickCard(e) {
 
@@ -220,42 +229,91 @@ function pickCard(e) {
 
 }
 
-socket.on("pick-card", (data) => {
+
+socket.on('pick-card', (data) => {
 
     console.log(data)
 
+    const roomId = getRoomId()
+    const playerId = data.id
 
-    const playerArea = document.querySelector(`.player-area[data-player-id="${data.id}"]`)
-    const cardsValues = Array.from(playerArea.querySelectorAll('.card')).map(card => card.dataset.value);
+    const playerArea = getPlayerArea(playerId)
+    const cardValues = getPlayerCardValues(playerArea)
+    const pickedValue = data.card.value
 
-    const pickedCardValue = String(data.card.value)
-    const displayCards = playerArea.querySelector('.cards')
+    if (hasReachedMaxCards(playerArea)) {
 
+        return console.log(`${data.pseudo} à atteind la limite des 7 cartes !`);
+    }
 
-    if (displayCards.children.length >= 7) {
+    const cardData = data.card
+    renderPickedCard(playerArea, cardData)
+
+    let score = data.score
+    let scoreAcutel = data.scoreAcutel
+
+    if (hasDuplicateCard(cardValues, pickedValue)) {
+
+        markPlayerAsLost(playerArea)
+        data.score -= score
+        data.scoreActuel = 0
+        score -= scoreAcutel
+        scoreAcutel = 0
+
+        updateScore(roomId, playerArea, score, scoreAcutel, data)
+
+        console.log(`${data.pseudo} à deux fois la carte ${data.card.value}`);
         return
     }
-    if (cardsValues) {
-        if (cardsValues.includes(pickedCardValue)) {
 
-            const playerId = data.id
-            const roomId = getRoomId()
+    updateScore(roomId, playerArea, score, scoreAcutel, data)
+})
 
-            socket.emit('update-game', roomId, playerId)
-            playerArea.classList.add('lost')
-            return
-        }
-    }
+
+function getPlayerArea(playerId) {
+
+    return document.querySelector(`.player-area[data-player-id="${playerId}"]`)
+}
+
+function getPlayerCardValues(playerArea) {
+
+    return Array.from(playerArea.querySelectorAll('.card')).map(card => card.dataset.value)
+}
+
+function hasDuplicateCard(cardValues, pickedValue) {
+
+    const valueAsString = String(pickedValue);
+    return cardValues.includes(valueAsString)
+}
+
+function hasReachedMaxCards(playerArea) {
+
+    return playerArea.querySelectorAll('.card').length >= 7
+}
+
+function markPlayerAsLost(playerArea) {
+
+    playerArea.classList.add('lost')
+}
+
+function renderPickedCard(playerArea, cardData) {
 
     const template = document.getElementById('cardTemplate').content.cloneNode(true)
+    const displayCard = playerArea.querySelector('.cards')
 
+    template.querySelector('.card').dataset.value = cardData.value
+    template.querySelector('.number').textContent = cardData.value
 
-    template.querySelector('.card').dataset.value = data.card.value
-    template.querySelector('.number').textContent = data.card.value
-    displayCards.append(template)
+    displayCard.append(template)
+}
 
-    // socket.emit('update-game', ())
-})
+function updateScore(roomId, playerArea, score, scoreActuel, data){
+
+    playerArea.querySelector('.score').textContent = score
+    playerArea.querySelector('.scoreActuel').textContent = scoreActuel
+    
+    socket.emit('update-score', roomId, data)
+}
 
 
 
