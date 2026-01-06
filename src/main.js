@@ -41,6 +41,13 @@ function init() {
     setGlobalEvent();
 }
 
+function getRoomId() {
+
+    const roomId = document.getElementById('roomId').textContent
+
+    return roomId
+}
+
 
 function chooseCreateOrJoin(e) {
 
@@ -60,8 +67,8 @@ function chooseCreateOrJoin(e) {
             code += Math.floor(Math.random() * 10)
         }
 
-        codeBox.textContent = code
-        roomIdBox.textContent = code
+        // codeBox.textContent = code
+        // roomIdBox.textContent = code
     }
 
     const active = document.querySelector('.starting.active')
@@ -186,10 +193,7 @@ socket.on("game-start", (data) => {
 
     orderedPlayers.forEach((player, index) => {
 
-        const template = document
-            .querySelector('#playerAreaTemplate')
-            .content
-            .cloneNode(true)
+        const template = document.querySelector('#playerAreaTemplate').content.cloneNode(true)
 
         const playerArea = template.querySelector('.player-area')
 
@@ -207,15 +211,6 @@ socket.on("game-start", (data) => {
 
     containerOther.append(fragment)
 
-
-    const playerArea = document.querySelector(`.player-area[data-player-id="${data.currentPlayer}"]`)
-    const playerAreas = document.querySelectorAll(`.player-area:not([data-player-id="${data.currentPlayer}"])`)
-
-    playerArea.classList.add('active')
-
-
-    console.log(data)
-
 })
 
 function pickCard(e) {
@@ -231,25 +226,25 @@ socket.on("pick-card", (data) => {
 
 
     const playerArea = document.querySelector(`.player-area[data-player-id="${data.id}"]`)
-    const cardsValues = Array.from(playerArea.querySelectorAll('.cardsInHand')).map(card => card.dataset.value);
+    const cardsValues = Array.from(playerArea.querySelectorAll('.card')).map(card => card.dataset.value);
 
     const pickedCardValue = String(data.card.value)
-    const playerAreas = document.querySelectorAll(`.player-area:not([data-player-id="${data.id}"])`)
     const displayCards = playerArea.querySelector('.cards')
 
-    playerArea.classList.add('active')
-    playerAreas.forEach(playerArea => {
-        playerArea.classList.remove('active')
-    });
 
-
-    // console.log('lastCardValue = ', lastCardValue)
-    // console.log('pickedCardValue', pickedCardValue)
-
-
-    if (displayCards.children.length >= 7) return
+    if (displayCards.children.length >= 7) {
+        return
+    }
     if (cardsValues) {
-        if (cardsValues.includes(pickedCardValue)) return
+        if (cardsValues.includes(pickedCardValue)) {
+
+            const playerId = data.id
+            const roomId = getRoomId()
+
+            socket.emit('update-game', roomId, playerId)
+            playerArea.classList.add('lost')
+            return
+        }
     }
 
     const template = document.getElementById('cardTemplate').content.cloneNode(true)
@@ -258,6 +253,8 @@ socket.on("pick-card", (data) => {
     template.querySelector('.card').dataset.value = data.card.value
     template.querySelector('.number').textContent = data.card.value
     displayCards.append(template)
+
+    // socket.emit('update-game', ())
 })
 
 

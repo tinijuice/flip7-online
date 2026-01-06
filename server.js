@@ -77,6 +77,7 @@ io.on("connection", (socket) => {
 
         room.players.forEach(player => {
             player.cards = [];
+            player.score = 0;
         });
 
         room.deck = createDeck();
@@ -84,7 +85,7 @@ io.on("connection", (socket) => {
         room.state = 'game';
 
         io.to(roomId).emit("game-start", {
-            players: room.players.map(p => ({id: p.id, pseudo: p.pseudo, cards: p.cards })),
+            players: room.players.map(p => ({ id: p.id, pseudo: p.pseudo, cards: p.cards })),
             currentPlayer: room.players[room.currentPlayerIndex].id,
             id_player: socket.id
         });
@@ -103,10 +104,12 @@ io.on("connection", (socket) => {
 
         const card = room.deck.shift();
         player.cards.push(card);
+        player.score += card.value
+
 
         console.log("Carte piochée :", card);
 
-        io.to(roomId).emit("pick-card", { pseudo: player.pseudo, card, id: player.id });
+        io.to(roomId).emit("pick-card", { pseudo: player.pseudo, card, id: player.id, score: player.score});
 
         room.currentPlayerIndex++
         if (room.currentPlayerIndex >= room.players.length) room.currentPlayerIndex = 0
@@ -116,11 +119,17 @@ io.on("connection", (socket) => {
 
 
     // Update game
-    socket.on("update-game", (roomId) => {
+    socket.on("update-game", (roomId, playerId) => {
 
         const room = rooms[roomId];
 
         if (!room) return
+
+        const players = room.players
+
+        const player = players.find((p) => p.id === playerId);
+
+        console.log(player)
 
 
     })

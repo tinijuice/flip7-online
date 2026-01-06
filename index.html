@@ -1,10 +1,10 @@
 <%- include('components/header.html', {title: 'Flip 7 Online' , page: '' })%>
 
    <main>
-      <div id="roomId" style="display: none;"></div>
+      <div id="roomId" style="display: none;">000000</div>
       <div id="playerID" style="display: none;"></div>
 
-      <section id="home" class="hidden">
+      <section id="home" class="">
          <div class="container">
             <div class="logo">
                <div class="image">
@@ -17,7 +17,7 @@
                <button id="create" data-btn="launch">Créer une salle</button>
                <div class="launch starting">
                   <div class="code">
-                     <p></p>
+                     <p>000000</p>
                      <div class="copy-box" id="copyBox">
                         <span class="icon-copy"></span>
                      </div>
@@ -26,14 +26,17 @@
                   <button id="startGame" class="hidden" type="submit">Lancer</button>
                </div>
                <div class="joinGame starting">
-                  <input type="text" maxlength="6" class="code-to-paste">
+                  <input type="text" maxlength="6" class="code-to-paste" value="000000">
                   <button id="join2" type="submit">Rejoindre</button>
                </div>
             </form>
          </div>
       </section>
 
-      <section id="game" class="">
+      <section id="game" class="hidden">
+         <div class="bg">
+            <div class="border"></div>
+         </div>
          <div class="container">
 
             <div id="pioche">
@@ -47,71 +50,8 @@
             <div class="players-container">
                <div class="other">
 
+                  <!-- Insersion du template "playerArea" -->
 
-                  <div class="player-area">
-                     <div class="infos">
-                        <div class="pseudo">TiniJuice</div>
-                        <div class="score">27</div>
-                        <div class="scoreTotal">143</div>
-                     </div>
-                     <div class="cards">
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-
-
-                     </div>
-                  </div>
-                  <div class="player-area me">
-                     <div class="infos">
-                        <div class="pseudo">TiniJuice</div>
-                        <div class="score">27</div>
-                        <div class="scoreTotal">143</div>
-                     </div>
-                     <div class="cards">
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-                        <div class="card">
-                           <span class="number">12</span>
-                        </div>
-
-
-                     </div>
-                  </div>
                </div>
             </div>
          </div>
@@ -125,6 +65,7 @@
                </div>
                <div class="cards">
 
+                  <!-- Insersion du template "cardTemplate" -->
 
                </div>
             </div>
@@ -139,7 +80,7 @@
 
       </section>
 
-      <div id="lobby" class="hidden">
+      <div id="lobby" class="">
          <div class="content">
             <div class="cards">
 
