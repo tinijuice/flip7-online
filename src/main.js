@@ -28,6 +28,7 @@ function setGlobalEvent() {
             join2: () => joinRoom(e),
             startGame: () => startGame(e),
             pioche: () => pickCard(e),
+            stop: () => stopMyGame(e),
             copyBox: () => copyCode(e)
         };
 
@@ -174,6 +175,7 @@ socket.on("game-start", (data) => {
 
     showGame()
     setGameArea(data)
+    setButtonStop()
 
 })
 
@@ -221,6 +223,14 @@ function setGameArea(data) {
     container.append(fragment)
 }
 
+function setButtonStop() {
+
+    const playerID = document.getElementById('playerID')
+    const button = document.getElementById('stop')
+
+    button.dataset.playerId = playerID.textContent
+}
+
 
 function pickCard(e) {
 
@@ -243,6 +253,8 @@ socket.on('pick-card', (data) => {
 
     if (hasReachedMaxCards(playerArea)) {
 
+        socket.emit('update-player', roomId, data)
+
         return console.log(`${data.pseudo} à atteind la limite des 7 cartes !`);
     }
 
@@ -250,23 +262,25 @@ socket.on('pick-card', (data) => {
     renderPickedCard(playerArea, cardData)
 
     let score = data.score
-    let scoreAcutel = data.scoreAcutel
+    let scoreActuel = data.scoreActuel
 
     if (hasDuplicateCard(cardValues, pickedValue)) {
 
         markPlayerAsLost(playerArea)
         data.score -= score
         data.scoreActuel = 0
-        score -= scoreAcutel
-        scoreAcutel = 0
+        score -= scoreActuel
+        scoreActuel = 0
 
-        updateScore(roomId, playerArea, score, scoreAcutel, data)
+        updateScore(roomId, playerArea, score, scoreActuel, data)
+
+        socket.emit('update-player', roomId, data)
 
         console.log(`${data.pseudo} à deux fois la carte ${data.card.value}`);
         return
     }
 
-    updateScore(roomId, playerArea, score, scoreAcutel, data)
+    updateScore(roomId, playerArea, score, scoreActuel, data)
 })
 
 
@@ -307,13 +321,33 @@ function renderPickedCard(playerArea, cardData) {
     displayCard.append(template)
 }
 
-function updateScore(roomId, playerArea, score, scoreActuel, data){
+function updateScore(roomId, playerArea, score, scoreActuel, data) {
 
     playerArea.querySelector('.score').textContent = score
     playerArea.querySelector('.scoreActuel').textContent = scoreActuel
-    
+
     socket.emit('update-score', roomId, data)
 }
+
+
+
+function stopMyGame(e) {
+
+    const roomId = getRoomId()
+
+    const button = e.target
+    const playerID = button.dataset.playerId
+
+    socket.emit('stop-my-game', roomId, playerID)
+}
+
+socket.on('stop-my-game', (playerID) => {
+
+    const playerArea = document.querySelector(`.player-area[data-player-id="${playerID}"]`)
+
+    playerArea.classList.add('stopped')
+})
+
 
 
 

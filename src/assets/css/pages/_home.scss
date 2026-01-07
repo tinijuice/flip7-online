@@ -275,6 +275,29 @@
             }
         }
 
+        #stop {
+
+            padding: 20px;
+            border-radius: 8px;
+            border: 0;
+            background-color: white;
+            color: var(--color-darkPurpl);
+            font-weight: 900;
+            font-size: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 6px 0 0 var(--color-darkPurpl);
+            cursor: pointer;
+            transition: filter .3s;
+            will-change: filter;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+
+            &:hover {
+                filter: brightness(.85);
+            }
+        }
+
         .players-container {
 
             width: 80%;
@@ -297,6 +320,10 @@
 
                 &.lost {
                     filter: brightness(.6);
+                }
+
+                &.stopped{
+                    border: 2px solid greenyellow;
                 }
 
                 &.me {

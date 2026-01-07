@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
     socket.on("create-room", (roomId, pseudo) => {
         socket.join(roomId);
 
-        if (!rooms[roomId]) rooms[roomId] = { players: [] };
+        if (!rooms[roomId]) rooms[roomId] = { id: roomId, players: [] };
         rooms[roomId].players.push({ id: socket.id, pseudo });
 
         io.to(roomId).emit("room-update", rooms[roomId].players);
@@ -75,11 +75,7 @@ io.on("connection", (socket) => {
 
         if (room.players.length < 2) console.log('rien')
 
-        room.players.forEach(player => {
-            player.cards = [];
-            player.score = 0;
-            player.scoreAcutel = 0;
-        });
+        setPlayerParams(room)
 
         room.deck = createDeck();
         room.currentPlayerIndex = 0;
@@ -92,6 +88,18 @@ io.on("connection", (socket) => {
         });
     })
 
+
+    function setPlayerParams(room) {
+
+        console.log('Paramètres des joueurs mis à 0')
+
+        room.players.forEach(player => {
+            player.cards = [];
+            player.score = 0;
+            player.scoreActuel = 0;
+            player.actif = true;
+        });
+    }
 
 
     socket.on('pick-card', (roomId) => {
@@ -127,18 +135,34 @@ io.on("connection", (socket) => {
     }
 
     function applyCardToPlayer(player, card) {
+
         player.cards.push(card)
     }
 
     function applyScoreToPlayer(player, card) {
-        player.scoreAcutel += card.value
+        player.scoreActuel += card.value
         player.score += card.value
     }
 
     function nextPlayer(room) {
+        const totalPlayers = room.players.length;
 
-        room.currentPlayerIndex++
-        if (room.currentPlayerIndex >= room.players.length) room.currentPlayerIndex = 0;
+        const allActive = room.players.every(player => player.actif === false);
+
+        if (allActive) {
+            console.log("Tous les joueurs sont inactifs");
+
+            restartGame(room)
+        }
+        let attempts = 0;
+
+        do {
+            room.currentPlayerIndex = (room.currentPlayerIndex + 1) % totalPlayers;
+            attempts++;
+        } while (
+            room.players[room.currentPlayerIndex].actif === false &&
+            attempts < totalPlayers
+        );
     }
 
     function emitPickCard(io, roomId, player, card) {
@@ -147,13 +171,14 @@ io.on("connection", (socket) => {
             card,
             id: player.id,
             score: player.score,
-            scoreAcutel: player.scoreAcutel
+            scoreActuel: player.scoreActuel,
+            actif: player.actif
         })
     }
 
 
 
-    // Update game
+    // Update score
     socket.on("update-score", (roomId, data) => {
 
 
@@ -164,11 +189,57 @@ io.on("connection", (socket) => {
         const player = room.players.find(player => player.id === data.id)
 
         player.score = data.score
-
-        console.log(roomId, '//', data)
+        player.scoreActuel = data.scoreActuel
     })
 
+
+    // Update player
+    socket.on('update-player', (roomId, data) => {
+
+        const room = rooms[roomId]
+
+        if (!room) return console.log('Aucune room');
+
+        const player = room.players.find(player => player.id === data.id)
+
+        player.actif = false
+    })
+
+
+    socket.on('stop-my-game', (roomId, playerID) => {
+
+        console.log(rooms[roomId])
+
+        const room = rooms[roomId]
+
+        if (!room) return console.log('Aucune room');
+
+        const player = room.players.find(player => player.id === playerID)
+
+        if (player.id !== room.players[room.currentPlayerIndex].id) {
+
+            console.log('Pas possible de stoper maintenant')
+            return
+        }
+
+        player.actif = false
+        nextPlayer(room)
+
+        io.to(roomId).emit("stop-my-game", playerID)
+    })
+
+
+    function restartGame(room) {
+
+        room.deck = []
+
+        setPlayerParams(room)
+        createDeck()
+
+        room.currentPlayerIndex = 0
+    }
 });
+
 
 
 function createDeck() {
