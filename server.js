@@ -81,6 +81,7 @@ io.on("connection", (socket) => {
         room.currentPlayerIndex = 0;
         room.state = 'game';
 
+
         io.to(roomId).emit("game-start", {
             players: room.players.map(p => ({ id: p.id, pseudo: p.pseudo, cards: p.cards })),
             currentPlayer: room.players[room.currentPlayerIndex].id,
@@ -237,6 +238,8 @@ io.on("connection", (socket) => {
         createDeck()
 
         room.currentPlayerIndex = 0
+
+        socket.to(room).emit('restart-game', room)
     }
 });
 
