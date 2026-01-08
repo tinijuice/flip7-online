@@ -5,15 +5,18 @@ import * as Game from './game.js';
 
 
 export function initSocket() {
-    const socket = io();
+    const socket = io("http://localhost:3000");
 
-    socket.on('room-update', (players) => {
-        console.log("Room update :", players);
-    });
 
-    socket.on('game-started', () => {
-        UI.startGame();
-    });
+    socket.on('update-lobby', (room) => {
+
+        UI.updateLobby(room)
+    })
+
+    socket.on('game-start', (room) => { 
+
+        UI.setGameArea(room)
+    })
 
     return socket;
 }

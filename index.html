@@ -1,8 +1,8 @@
 <%- include('components/header.html', {title: 'Flip 7 Online' , page: '' })%>
 
    <main>
-      <div id="roomId" style="display: none;">000000</div>
-      <div id="playerID" style="display: none;"></div>
+      <div id="roomId" data-id="000000"></div>
+      <div id="playerID" data-id=""></div>
 
       <section id="home" class="">
          <div class="container">
@@ -13,8 +13,8 @@
             </div>
             <form>
                <input value="leo" id="inputPseudo" type="text" placeholder="Entrer un pseudo" required />
-               <button id="join" data-btn="joinGame">Rejoindre une salle</button>
-               <button id="create" data-btn="launch">Créer une salle</button>
+               <button id="setJoinBtn" data-btn="joinGame">Rejoindre une salle</button>
+               <button id="setCreateBtn" data-btn="launch">Créer une salle</button>
                <div class="launch starting">
                   <div class="code">
                      <p>000000</p>
@@ -22,12 +22,12 @@
                         <span class="icon-copy"></span>
                      </div>
                   </div>
-                  <button id="openRoom" type="submit">Créer</button>
+                  <button id="createRoom" type="submit">Créer</button>
                   <button id="startGame" class="hidden" type="submit">Lancer</button>
                </div>
                <div class="joinGame starting">
                   <input type="text" maxlength="6" class="code-to-paste" value="000000">
-                  <button id="join2" type="submit">Rejoindre</button>
+                  <button id="joinRoom" type="submit">Rejoindre</button>
                </div>
             </form>
          </div>
