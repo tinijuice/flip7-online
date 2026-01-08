@@ -17,6 +17,7 @@ export function setPlayersDefaultParams(room) {
 }
 
 export function createDeck() {
+    
     const deck = [];
 
     for (let i = 0; i <= 12; i++) {
@@ -34,5 +35,5 @@ function shuffle(array) {
 
 export function setOrderPlayers(room) {
     
-    
+
 }
