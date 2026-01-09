@@ -15,6 +15,8 @@ function setGlobalEvent() {
             createRoom: () => createRoom(e),
             joinRoom: () => joinRoom(e),
             startGame: () => startGame(e),
+            pioche: () => pickCard(e),
+
         };
 
         const action = Object.keys(actions).find(key => e.target.closest(`.${key}, #${key}`));
@@ -26,7 +28,7 @@ function setGlobalEvent() {
 function setPlayerId() {
 
     socket.on("connect", () => {
-        document.getElementById('playerID').dataset.id = socket.id;
+        document.getElementById('playerId').dataset.id = socket.id;
     });
 }
 
@@ -35,8 +37,13 @@ function getRoomId() {
     return document.getElementById('roomId').dataset.id
 }
 
-////////////////////////////////////
-// Procéssus de création de room///
+function getPlayerId() {
+
+    return document.getElementById('playerId').dataset.id
+}
+
+//////////////////////////////////////
+// Procéssus de création de room ///
 //////////////////////////////////
 function setCreateBtn(e) {
 
@@ -91,9 +98,9 @@ function addRoomId(code) {
 }
 
 
-///////////////////////////////////////
-// Procéssus pour rejoindre une room//
-////////////////////////////////////
+//////////////////////////////////////////
+// Procéssus pour rejoindre une room ///
+//////////////////////////////////////
 function setJoinBtn(e) {
 
     e.preventDefault()
@@ -122,7 +129,7 @@ function joinRoom(e) {
 function setPlayerData() {
 
     const pseudo = document.getElementById('inputPseudo').value;
-    const playerId = document.getElementById('playerID').dataset.id;
+    const playerId = getPlayerId()
 
     const data = { id: playerId, pseudo: pseudo };
 
@@ -130,13 +137,22 @@ function setPlayerData() {
 }
 
 
-//////////////////////////
-// Set up de la partie//
-//////////////////////
+///////////////////////////
+// Set up de la partie //
+///////////////////////
 function startGame(e) {
     
     e.preventDefault()
     socket.emit('start-game', getRoomId())
+}
+
+
+////////////////////////////
+// Gestion de la pioche //
+////////////////////////
+function pickCard(e) {
+    
+    socket.emit('pick-card', getRoomId())
 }
 
 

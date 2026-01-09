@@ -6,7 +6,6 @@ const app = express();
 const server = http.createServer(app);
 
 import * as Game from './src/assets/js/game.js';
-import { create } from 'domain';
 
 
 // Autoriser CORS pour Vite (port 5173)
@@ -76,16 +75,68 @@ io.on("connection", (socket) => {
         const room = rooms[roomId]
 
         Game.setPlayersDefaultParams(room)
-        Game.setOrderPlayers(room)
 
-        const cards = Game.createDeck()
-        room.deck = []
-        room.deck.push(cards)
+        room.deck = Game.createDeck()
 
-        console.log(room)
+        room.currentPlayerIndex = 0
+
         io.to(roomId).emit('game-start', room)
     })
+
+
+    socket.on('pick-card', (roomId) => {
+
+        if (!isRoomExist(roomId)) return ('La room', roomId, "n'existe pas");
+        const room = rooms[roomId]
+
+        const player = room.players[room.currentPlayerIndex]
+
+        if (!isCurrentPlayer(socket, room)) {
+
+            const player = room.players.find(p => p.id === socket.id).pseudo
+            console.log("Ce n'est pas au tour de", player)
+            return
+        }
+
+
+        const card = Game.drawCard(room)
+
+        if (Game.hasReachedMaxCards(player)) {
+            console.log("finish :", player.finish)
+            console.log(player.pseudo, "à atteint la limite de carte")
+            return
+        }
+
+        Game.applyCardtoPlayer(player, card)
+
+        if (Game.hasDuplicateCard(player, card)) {
+
+            console.log("actif: ", player.actif)
+            console.log(player.pseudo, "à deux fois la carte", Game.hasDuplicateCard(player, card))
+            return
+        }
+
+        Game.applyScoretoPlayer(player, card)
+
+        io.to(roomId).emit('update-player-area', player, card)
+
+        Game.nextPlayer(room)
+
+        console.log(player.pseudo, "à pioché un", card.value)
+        console.log(player.hand)
+
+    })
+
+
+
+
+    function isCurrentPlayer(socket, room) {
+
+        return socket.id === room.players[room.currentPlayerIndex].id
+    }
+
 });
+
 
 
 function isRoomExist(roomId) {

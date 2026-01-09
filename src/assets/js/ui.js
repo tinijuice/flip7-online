@@ -57,3 +57,17 @@ function toggleArea() {
         document.getElementById(s).classList.toggle('hidden')
     });
 }
+
+
+export function updatePlayerArea(player, card) {
+    
+    const display = document.querySelector('.player-area[data-player-id="'+ player.id +'"] .cards')
+    const template = document.getElementById('cardTemplate').content.cloneNode(true)
+
+    template.querySelector('.number').textContent = card.value
+    template.querySelector('.card').dataset.value = card.value
+
+    display.append(template)
+
+
+}

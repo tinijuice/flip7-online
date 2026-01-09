@@ -13,9 +13,14 @@ export function initSocket() {
         UI.updateLobby(room)
     })
 
-    socket.on('game-start', (room) => { 
+    socket.on('game-start', (room) => {
 
         UI.setGameArea(room)
+    })
+
+    socket.on('update-player-area', (player, card)=>{
+
+        UI.updatePlayerArea(player, card)
     })
 
     return socket;
