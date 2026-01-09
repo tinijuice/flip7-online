@@ -98,24 +98,28 @@ io.on("connection", (socket) => {
             return
         }
 
+        if (player.actif === false) return console.log('Erreur, joueur', player.pseudo, 'éliminé')
 
         const card = Game.drawCard(room)
 
         if (Game.hasReachedMaxCards(player)) {
-            console.log("finish :", player.finish)
+
+            Game.nextPlayer(room)
             console.log(player.pseudo, "à atteint la limite de carte")
             return
         }
 
-        Game.applyCardtoPlayer(player, card)
 
-        if (Game.hasDuplicateCard(player, card)) {
+        if (Game.hasAnyDuplicate(player, card)) {
 
-            console.log("actif: ", player.actif)
-            console.log(player.pseudo, "à deux fois la carte", Game.hasDuplicateCard(player, card))
+            Game.applyCardtoPlayer(player, card)
+            Game.nextPlayer(room)
+            io.to(roomId).emit('update-player-area', player, card)
+            console.log(player.pseudo, "à deux fois la carte", Game.hasAnyDuplicate(player, card))
             return
         }
 
+        Game.applyCardtoPlayer(player, card)
         Game.applyScoretoPlayer(player, card)
 
         io.to(roomId).emit('update-player-area', player, card)
@@ -123,7 +127,6 @@ io.on("connection", (socket) => {
         Game.nextPlayer(room)
 
         console.log(player.pseudo, "à pioché un", card.value)
-        console.log(player.hand)
 
     })
 

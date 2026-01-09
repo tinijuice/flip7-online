@@ -51,19 +51,32 @@ export function applyScoretoPlayer(player, card) {
     player.score += card.value
 }
 
-export function hasDuplicateCard(player, newCard) {
-    const hand = player.hand;
-    console.log(newCard.value)
+export function hasAnyDuplicate(player, newCard) {
+    const seen = new Set();
 
-    for (const card of hand) {
-        if (card.value === newCard.value) {
+    for (const card of player.hand) {
+        // doublon dans la main
+        if (seen.has(card.value)) {
+
+            console.log('caca')
+            player.actif = false;
             return newCard.value;
         }
+
+        // newCard = doublon
+        if (card.value === newCard.value) {
+            player.actif = false;
+
+            player.actif = false
+            return newCard.value;
+        }
+
+        seen.add(card.value);
     }
 
-    player.actif = false
     return false;
 }
+
 
 export function hasReachedMaxCards(player) {
 
@@ -73,11 +86,12 @@ export function hasReachedMaxCards(player) {
         return true
     }
 
-    player.finish = false
-    player.actif = false
     return false
 }
 
 export function nextPlayer(room) {
 
+    room.currentPlayerIndex++
+    if (room.currentPlayerIndex >= room.players.length) room.currentPlayerIndex = 0
+    console.log('à', room.players[room.currentPlayerIndex].pseudo)
 }
