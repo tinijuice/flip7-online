@@ -90,8 +90,17 @@ export function hasReachedMaxCards(player) {
 }
 
 export function nextPlayer(room) {
+    const total = room.players.length
+    let i = 0
 
-    room.currentPlayerIndex++
-    if (room.currentPlayerIndex >= room.players.length) room.currentPlayerIndex = 0
-    console.log('à', room.players[room.currentPlayerIndex].pseudo)
+    do {
+        room.currentPlayerIndex = (room.currentPlayerIndex + 1) % total
+        i++
+    } while (!room.players[room.currentPlayerIndex].actif && i < total)
+
+    if (i === total) {
+        console.log("Aucun joueur actif")
+    } else {
+        console.log('à', room.players[room.currentPlayerIndex].pseudo)
+    }
 }
