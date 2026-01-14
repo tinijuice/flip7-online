@@ -20,7 +20,13 @@ export function initSocket() {
 
     socket.on('update-player-area', (player, card)=>{
 
-        UI.updatePlayerArea(player, card)
+        UI.addCardInGameArea(player, card)
+        UI.addScoreToPlayer(player)
+    })
+
+    socket.on('current-player', (player)=>{
+
+        UI.markCurrentPlayer(player)
     })
 
     return socket;

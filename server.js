@@ -80,7 +80,11 @@ io.on("connection", (socket) => {
 
         room.currentPlayerIndex = 0
 
+
+        const currentPlayer = room.players[room.currentPlayerIndex]
+
         io.to(roomId).emit('game-start', room)
+        io.to(roomId).emit('current-player', currentPlayer)
     })
 
 
@@ -89,7 +93,7 @@ io.on("connection", (socket) => {
         if (!isRoomExist(roomId)) return ('La room', roomId, "n'existe pas");
         const room = rooms[roomId]
 
-        const player = room.players[room.currentPlayerIndex]
+        let player = room.players[room.currentPlayerIndex]
 
         if (!isCurrentPlayer(socket, room)) {
 
@@ -114,7 +118,12 @@ io.on("connection", (socket) => {
 
             Game.applyCardtoPlayer(player, card)
             Game.nextPlayer(room)
+
+            player.score -= player.scoreActuel
+            player.scoreActuel = 0
+
             io.to(roomId).emit('update-player-area', player, card)
+
             console.log(player.pseudo, "à deux fois la carte", Game.hasAnyDuplicate(player, card))
             return
         }
@@ -125,6 +134,9 @@ io.on("connection", (socket) => {
         io.to(roomId).emit('update-player-area', player, card)
 
         Game.nextPlayer(room)
+
+        player = room.players[room.currentPlayerIndex]
+        io.to(roomId).emit('current-player', player)
 
         console.log(player.pseudo, "à pioché un", card.value)
 

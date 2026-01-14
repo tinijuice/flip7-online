@@ -304,14 +304,12 @@
             position: relative;
             height: 75%;
             display: grid;
-            grid-template-rows: calc(100% / 5);
+            grid-template-rows: repeat(5, 1fr);
 
             .player-area {
                 width: 100%;
-                background: rgba(255, 255, 255, 0.3);
                 border-radius: 8px;
                 backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.3);
                 padding: 8px;
                 height: 90%;
@@ -324,6 +322,10 @@
 
                 &.stopped {
                     border: 2px solid greenyellow;
+                }
+
+                &.currentPlayer{
+                    background: rgba(204, 121, 255, 0.3);
                 }
 
                 &.me {

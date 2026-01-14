@@ -12,6 +12,7 @@ export function setPlayersDefaultParams(room) {
     room.players = room.players.map(player => ({
         ...player,
         score: 0,
+        scoreActuel: 0,
         actif: true,
         finish: false,
         hand: []
@@ -48,6 +49,7 @@ export function applyCardtoPlayer(player, card) {
 
 export function applyScoretoPlayer(player, card) {
 
+    player.scoreActuel += card.value
     player.score += card.value
 }
 
@@ -91,16 +93,21 @@ export function hasReachedMaxCards(player) {
 
 export function nextPlayer(room) {
     const total = room.players.length
-    let i = 0
 
+    const activePlayers = room.players.filter(p => p.actif)
+    if (activePlayers.length === 0) {
+        console.log("Aucun joueur actif")
+        return { hasActivePlayer: false, currentPlayer: null }
+    }
+
+    let i = 0
     do {
         room.currentPlayerIndex = (room.currentPlayerIndex + 1) % total
         i++
-    } while (!room.players[room.currentPlayerIndex].actif && i < total)
+    } while (!room.players[room.currentPlayerIndex].actif)
 
-    if (i === total) {
-        console.log("Aucun joueur actif")
-    } else {
-        console.log('à', room.players[room.currentPlayerIndex].pseudo)
-    }
+    console.log('C\'est au tour de', room.players[room.currentPlayerIndex].pseudo)
+    return { hasActivePlayer: true, currentPlayer: room.players[room.currentPlayerIndex] }
 }
+
+

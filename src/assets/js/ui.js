@@ -3,9 +3,15 @@ const fragment = document.createDocumentFragment()
 // ui.js
 let socket = null;
 
+function getCurrentPlayerArea(player) {
+
+    return document.querySelector('.player-area[data-player-id="' + player.id + '"]')
+}
+
 export function setSocket(s) {
     socket = s;
 }
+
 
 export function updateLobby(room) {
 
@@ -59,9 +65,9 @@ function toggleArea() {
 }
 
 
-export function updatePlayerArea(player, card) {
-    
-    const display = document.querySelector('.player-area[data-player-id="'+ player.id +'"] .cards')
+export function addCardInGameArea(player, card) {
+
+    const display = document.querySelector('.player-area[data-player-id="' + player.id + '"] .cards')
     const template = document.getElementById('cardTemplate').content.cloneNode(true)
 
     template.querySelector('.number').textContent = card.value
@@ -70,4 +76,28 @@ export function updatePlayerArea(player, card) {
     display.append(template)
 
 
+}
+
+export function markCurrentPlayer(player) {
+
+    const currentPlayer = document.querySelector('.player-area.currentPlayer')
+    const newCurrentPlayer = getCurrentPlayerArea(player)
+
+    if (currentPlayer && newCurrentPlayer) {
+
+        currentPlayer.classList.remove('currentPlayer')
+        newCurrentPlayer.classList.add('currentPlayer')
+        return
+    }
+
+    newCurrentPlayer.classList.add('currentPlayer')
+
+}
+
+export function addScoreToPlayer(player) {
+
+    const playerArea = getCurrentPlayerArea(player)
+
+    playerArea.querySelector('.score').textContent = player.score
+    playerArea.querySelector('.scoreActuel').textContent = player.scoreActuel
 }
