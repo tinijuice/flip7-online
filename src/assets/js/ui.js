@@ -95,6 +95,7 @@ export function markCurrentPlayer(player) {
 }
 
 export function addScoreToPlayer(player) {
+    console.log(player)
 
     const playerArea = getCurrentPlayerArea(player)
 

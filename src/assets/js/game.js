@@ -103,10 +103,12 @@ export function nextPlayer(room) {
     let i = 0
     do {
         room.currentPlayerIndex = (room.currentPlayerIndex + 1) % total
+        room.currentPlayerId = room.players[room.currentPlayerIndex].id
         i++
     } while (!room.players[room.currentPlayerIndex].actif)
 
     console.log('C\'est au tour de', room.players[room.currentPlayerIndex].pseudo)
+    console.log('currPlayID :', room.currentPlayerId, 'currPlayIndex :', room.currentPlayerIndex)
     return { hasActivePlayer: true, currentPlayer: room.players[room.currentPlayerIndex] }
 }
 

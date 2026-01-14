@@ -79,12 +79,15 @@ io.on("connection", (socket) => {
         room.deck = Game.createDeck()
 
         room.currentPlayerIndex = 0
+        room.currentPlayerId = room.players[room.currentPlayerIndex].id
 
 
         const currentPlayer = room.players[room.currentPlayerIndex]
 
         io.to(roomId).emit('game-start', room)
         io.to(roomId).emit('current-player', currentPlayer)
+
+        console.log(room)
     })
 
 
@@ -135,10 +138,11 @@ io.on("connection", (socket) => {
 
         Game.nextPlayer(room)
 
+        console.log(player.pseudo, "à pioché un", card.value)
+
         player = room.players[room.currentPlayerIndex]
         io.to(roomId).emit('current-player', player)
 
-        console.log(player.pseudo, "à pioché un", card.value)
 
     })
 
