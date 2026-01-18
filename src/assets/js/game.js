@@ -97,7 +97,7 @@ export function nextPlayer(room) {
     const activePlayers = room.players.filter(p => p.actif)
     if (activePlayers.length === 0) {
         console.log("Aucun joueur actif")
-        return { hasActivePlayer: false, currentPlayer: null }
+        return { hasActivePlayer: false }
     }
 
     let i = 0
@@ -109,7 +109,7 @@ export function nextPlayer(room) {
 
     console.log('C\'est au tour de', room.players[room.currentPlayerIndex].pseudo)
     console.log('currPlayID :', room.currentPlayerId, 'currPlayIndex :', room.currentPlayerIndex)
-    return { hasActivePlayer: true, currentPlayer: room.players[room.currentPlayerIndex] }
+    return { hasActivePlayer: true }
 }
 
 

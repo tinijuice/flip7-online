@@ -78,19 +78,15 @@ export function addCardInGameArea(player, card) {
 
 }
 
-export function markCurrentPlayer(player) {
+export function markCurrentPlayer(room) {
 
-    const currentPlayer = document.querySelector('.player-area.currentPlayer')
-    const newCurrentPlayer = getCurrentPlayerArea(player)
+    const currentPlayer = getCurrentPlayerArea(room.players[room.currentPlayerIndex])
 
-    if (currentPlayer && newCurrentPlayer) {
+    document.querySelectorAll('.player-area').forEach(el => {
+        el.classList.remove('currentPlayer')
+    });
 
-        currentPlayer.classList.remove('currentPlayer')
-        newCurrentPlayer.classList.add('currentPlayer')
-        return
-    }
-
-    newCurrentPlayer.classList.add('currentPlayer')
+    currentPlayer.classList.add('currentPlayer')
 
 }
 

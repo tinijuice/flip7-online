@@ -8,25 +8,25 @@ export function initSocket() {
     const socket = io("http://localhost:3000");
 
 
-    socket.on('update-lobby', (room) => {
+    socket.on('update-lobby', room => {
 
         UI.updateLobby(room)
     })
 
-    socket.on('game-start', (room) => {
+    socket.on('game-start', room => {
 
         UI.setGameArea(room)
     })
 
-    socket.on('update-player-area', (player, card)=>{
+    socket.on('update-player-area', (player, card) => {
 
         UI.addCardInGameArea(player, card)
         UI.addScoreToPlayer(player)
     })
 
-    socket.on('current-player', (player)=>{
+    socket.on('current-player', room => {
 
-        UI.markCurrentPlayer(player)
+        UI.markCurrentPlayer(room)
     })
 
     return socket;

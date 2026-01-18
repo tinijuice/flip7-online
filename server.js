@@ -82,10 +82,9 @@ io.on("connection", (socket) => {
         room.currentPlayerId = room.players[room.currentPlayerIndex].id
 
 
-        const currentPlayer = room.players[room.currentPlayerIndex]
 
         io.to(roomId).emit('game-start', room)
-        io.to(roomId).emit('current-player', currentPlayer)
+        io.to(roomId).emit('current-player', room)
 
         console.log(room)
     })
@@ -93,60 +92,91 @@ io.on("connection", (socket) => {
 
     socket.on('pick-card', (roomId) => {
 
-        if (!isRoomExist(roomId)) return ('La room', roomId, "n'existe pas");
-        const room = rooms[roomId]
-
-        let player = room.players[room.currentPlayerIndex]
-
-        if (!isCurrentPlayer(socket, room)) {
-
-            const player = room.players.find(p => p.id === socket.id).pseudo
-            console.log("Ce n'est pas au tour de", player)
+        if (!isRoomExist(roomId)) {
+            console.log("La room n'existe pas :", roomId)
             return
         }
 
-        if (player.actif === false) return console.log('Erreur, joueur', player.pseudo, 'éliminé')
+        const room = rooms[roomId]
+        let player = room.players[room.currentPlayerIndex]
+
+        // Sécurité : pas son tour
+        if (!isCurrentPlayer(socket, room)) {
+            const pseudo = room.players.find(p => p.id === socket.id)?.pseudo
+            console.log("Ce n'est pas au tour de", pseudo)
+            return
+        }
+
+        // Joueur éliminé
+        if (!player.actif) {
+            console.log('Erreur, joueur éliminé :', player.pseudo)
+            return
+        }
 
         const card = Game.drawCard(room)
 
+        /* ============================
+            LIMITE DE CARTES ATTEINTE
+        ============================ */
         if (Game.hasReachedMaxCards(player)) {
 
-            Game.nextPlayer(room)
-            console.log(player.pseudo, "à atteint la limite de carte")
+            const result = Game.nextPlayer(room)
+            hasActivePlayer(roomId, result, player)
+
+            console.log(player.pseudo, "a atteint la limite de cartes")
             return
         }
 
-
+        /* ============================
+            CARTE EN DOUBLE
+        ============================ */
         if (Game.hasAnyDuplicate(player, card)) {
 
             Game.applyCardtoPlayer(player, card)
-            Game.nextPlayer(room)
 
+            // reset score
             player.score -= player.scoreActuel
             player.scoreActuel = 0
 
             io.to(roomId).emit('update-player-area', player, card)
 
-            console.log(player.pseudo, "à deux fois la carte", Game.hasAnyDuplicate(player, card))
+            const result = Game.nextPlayer(room)
+            hasActivePlayer(roomId, result, player)
+            
             return
+
         }
 
+        /* ============================
+            CAS NORMAL
+        ============================ */
         Game.applyCardtoPlayer(player, card)
         Game.applyScoretoPlayer(player, card)
 
         io.to(roomId).emit('update-player-area', player, card)
 
-        Game.nextPlayer(room)
+        console.log(player.pseudo, "a pioché un", card.value)
 
-        console.log(player.pseudo, "à pioché un", card.value)
-
-        player = room.players[room.currentPlayerIndex]
-        io.to(roomId).emit('current-player', player)
-
-
+        const result = Game.nextPlayer(room)
+        hasActivePlayer(roomId, result, player)
     })
 
 
+
+    function hasActivePlayer(roomId, result, player) {
+
+        const room = rooms[roomId]
+
+        if (!result.hasActivePlayer) {
+            console.log('Fin de partie')
+            io.to(roomId).emit('game-over', room)
+            return
+        }
+
+        io.to(roomId).emit('current-player', room)
+        console.log(player.pseudo, "a pioché un doublon")
+        return
+    }
 
 
     function isCurrentPlayer(socket, room) {
